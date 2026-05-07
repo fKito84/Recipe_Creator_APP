@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecetApp</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="min-h-screen bg-cover bg-center bg-fixed p-4 md:p-8" style="background-image: url('https://images.unsplash.com/photo-1512149519538-136d1b8c574a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjBraXRjaGVuJTIwY29va2luZ3xlbnwxfHx8fDE3Nzc0NDcwNzJ8MA&ixlib=rb-4.1.0&q=80&w=1080')">
+    
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm pointer-events-none z-0"></div>
+
+    <div class="relative z-10 max-w-4xl mx-auto space-y-6">
+        
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-4 flex justify-between items-center shadow-lg">
+            <h1 class="flex items-center gap-2 text-xl md:text-2xl font-black text-gray-900">
+                <div class="p-2 bg-indigo-100 rounded-xl border-2 border-gray-800">
+                    <i data-lucide="chef-hat" class="w-6 h-6 text-indigo-600"></i>
+                </div>
+                <span>RecetApp</span>
+            </h1>
+            <a href="/favorites" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 rounded-xl hover:bg-yellow-50 hover:shadow-md transition-all font-bold text-gray-800">
+                <i data-lucide="star" class="w-5 h-5 text-yellow-500 fill-yellow-500"></i>
+                <span class="hidden sm:inline">Favoritos</span>
+            </a>
+        </div>
+
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg">
+            <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
+                <div class="p-2 bg-green-100 rounded-lg border-2 border-gray-800">
+                    <i data-lucide="package" class="w-5 h-5 text-green-700"></i>
+                </div>
+                Bloque 1 — Mi Despensa
+            </h2>
+
+            <div class="border-2 border-gray-300 rounded-xl p-4 bg-white/60">
+                <form action="/add_ingredient" method="POST" class="flex flex-col md:flex-row gap-3 mb-4">
+                    <input type="text" name="nombre" placeholder="Ej. Tomate..." required class="flex-1 px-4 py-3 border-2 border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 font-medium">
+                    <div class="flex gap-2">
+                        <input type="number" name="cantidad" value="1" min="1" required class="w-24 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-green-500">
+                        <select name="unidad" class="w-28 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-green-500">
+                            <option value="unid">unid</option>
+                            <option value="gr">gr</option>
+                            <option value="ml">ml</option>
+                        </select>
+                        <button type="submit" class="px-4 py-3 bg-gray-900 text-white rounded-xl border-2 border-gray-900 hover:bg-gray-800 hover:shadow-md transition-all flex items-center justify-center gap-2 shrink-0 font-bold">
+                            <i data-lucide="plus" class="w-5 h-5"></i>
+                            <span class="hidden sm:inline">Añadir</span>
+                        </button>
+                    </div>
+                </form>
+
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-400 transition-colors">
+                        <span class="font-medium flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                            Pollo <span class="text-gray-500 text-sm ml-2">(500 gr)</span>
+                        </span>
+                        <div class="flex gap-2">
+                            <button class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 border-2 border-transparent hover:border-red-200 rounded-lg transition-colors">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form action="/generate_menu" method="POST">
+            <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg mb-6">
+                <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
+                    <div class="p-2 bg-blue-100 rounded-lg border-2 border-gray-800">
+                        <i data-lucide="settings" class="w-5 h-5 text-blue-700"></i>
+                    </div>
+                    Bloque 2 — Preferencias
+                </h2>
+
+                <div class="flex flex-col md:flex-row gap-5">
+                    <div class="flex-1">
+                        <label class="flex items-center gap-2 mb-2 font-bold text-gray-700">
+                            <i data-lucide="salad" class="w-4 h-4"></i> Dieta
+                        </label>
+                        <select name="dieta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                            <option value="completa">Completa</option>
+                            <option value="vegetariano">Vegetariano</option>
+                            <option value="vegano">Vegano</option>
+                        </select>
+                    </div>
+
+                    <div class="flex-1">
+                        <label class="flex items-center gap-2 mb-2 font-bold text-gray-700">
+                            <i data-lucide="egg-fried" class="w-4 h-4"></i> Tipo de receta
+                        </label>
+                        <select name="tipo_receta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
+                            <option value="menu_completo">Menú completo</option>
+                            <option value="desayuno">Desayuno</option>
+                            <option value="comida">Comida</option>
+                            <option value="cena">Cena</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg">
+                <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
+                    <div class="p-2 bg-purple-100 rounded-lg border-2 border-gray-800">
+                        <i data-lucide="users" class="w-5 h-5 text-purple-700"></i>
+                    </div>
+                    Bloque 3 — Generar
+                </h2>
+
+                <div class="border-2 border-gray-300 rounded-xl p-4 bg-white/60 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <label class="font-bold text-gray-700 whitespace-nowrap">Comensales:</label>
+                        <input type="number" name="personas" value="2" min="1" max="20" class="px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto cursor-pointer">
+                    </div>
+
+                    <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl border-2 border-indigo-900 hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 font-bold text-lg">
+                        <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                        GENERAR RECETAS
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="welcomeModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white border-2 border-gray-800 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
+            
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-indigo-100 border-2 border-indigo-600 rounded-2xl flex items-center justify-center transform rotate-3">
+                    <i data-lucide="party-popper" class="w-8 h-8 text-indigo-600"></i>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-black text-center text-gray-900 mb-2">¡Bienvenido de nuevo!</h2>
+            <p class="text-center text-gray-500 font-medium mb-6">Tienes ingredientes guardados en tu despensa virtual.</p>
+
+            <div class="space-y-3">
+                <button onclick="document.getElementById('welcomeModal').classList.add('hidden')" class="w-full px-6 py-4 bg-green-500 text-white rounded-xl border-2 border-green-700 hover:bg-green-600 transition-all flex items-center justify-center gap-2 font-bold text-lg">
+                    <i data-lucide="check" class="w-6 h-6"></i> Sí, mantener
+                </button>
+                <form action="/clear_pantry" method="POST">
+                    <button type="submit" class="w-full px-6 py-4 bg-white text-red-600 rounded-xl border-2 border-red-200 hover:bg-red-50 transition-all flex items-center justify-center gap-2 font-bold">
+                        <i data-lucide="trash-2" class="w-5 h-5"></i> No, vaciar despensa
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
