@@ -12,88 +12,85 @@
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm pointer-events-none z-0"></div>
 
     <div class="relative z-10 max-w-4xl mx-auto space-y-6">
-        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-4 md:px-6 md:py-5 flex justify-between items-center shadow-lg">
-            <a href="javascript:history.back()" class="flex items-center gap-2 text-gray-700 hover:text-black hover:bg-gray-100 px-4 py-2 rounded-xl transition-colors font-bold">
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-4 flex justify-between items-center shadow-lg">
+            <a href="/" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 rounded-xl hover:bg-gray-50 transition-all font-bold text-gray-800">
                 <i data-lucide="arrow-left" class="w-5 h-5"></i>
-                <span class="hidden sm:inline">Volver</span>
+                <span>Volver</span>
             </a>
-            
-            <h1 class="flex items-center gap-3 text-xl md:text-2xl font-black text-gray-900 absolute left-1/2 transform -translate-x-1/2">
-                <span class="text-3xl hidden md:inline">{{ receta.emoji }}</span>
-                <span class="truncate max-w-[150px] md:max-w-xs text-center">{{ receta.nombre }}</span>
-            </h1>
-            
-            <form action="/save_favorite" method="POST">
-                <input type="hidden" name="receta_id" value="{{ receta.id }}">
-                <button type="submit" class="flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-800 text-gray-800 rounded-xl hover:bg-yellow-50 hover:border-yellow-600 hover:text-yellow-700 transition-all font-bold">
-                    <i data-lucide="star" class="w-5 h-5 group-hover:text-yellow-500"></i>
-                    <span class="hidden sm:inline">Guardar</span>
-                </button>
-            </form>
+            <h1 class="text-xl font-black text-gray-900 truncate px-4">{{ receta.nombre }}</h1>
         </div>
 
-        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-6 md:p-8 shadow-2xl">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-amber-50 border-2 border-amber-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                    <i data-lucide="clock" class="w-6 h-6 text-amber-600 mb-2"></i>
-                    <span class="text-sm font-bold text-amber-900 uppercase tracking-wider">Tiempo</span>
-                    <span class="text-lg font-black text-amber-700">{{ receta.tiempo }} min</span>
-                </div>
-                <div class="bg-rose-50 border-2 border-rose-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                    <div class="text-rose-600 mb-2 font-black text-xl">🔥</div>
-                    <span class="text-sm font-bold text-rose-900 uppercase tracking-wider">Calorías</span>
-                    <span class="text-lg font-black text-rose-700">{{ receta.calorias }} kcal</span>
-                </div>
-                <div class="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                    <i data-lucide="users" class="w-6 h-6 text-blue-600 mb-2"></i>
-                    <span class="text-sm font-bold text-blue-900 uppercase tracking-wider">Porciones</span>
-                    <span class="text-lg font-black text-blue-700">{{ receta.personas }} pax</span>
-                </div>
-                <div class="bg-emerald-50 border-2 border-emerald-200 rounded-xl p-4 flex flex-col items-center justify-center text-center">
-                    <i data-lucide="salad" class="w-6 h-6 text-emerald-600 mb-2"></i>
-                    <span class="text-sm font-bold text-emerald-900 uppercase tracking-wider">Dieta</span>
-                    <span class="text-lg font-black text-emerald-700 capitalize">{{ receta.dieta }}</span>
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-3xl overflow-hidden shadow-2xl">
+            <div class="bg-indigo-600 p-8 text-white relative">
+                <div class="relative z-10">
+                    
+                    <div class="flex gap-4 mb-6">
+                        <form action="/cook_selection" method="POST" class="flex-1">
+                            <input type="hidden" name="recetas_seleccionadas" value="{{ receta.id }}">
+                            <button type="submit" class="w-full py-4 bg-green-500 text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-green-600 shadow-lg border-2 border-green-700 transition-all text-lg">
+                                <i data-lucide="flame" class="w-7 h-7"></i> 
+                                {% if receta.cocinado == 0 %}
+                                    EMPEZAR A COCINAR ESTE PLATO
+                                {% else %}
+                                    VOLVER A COCINAR ESTE PLATO
+                                {% endif %}
+                            </button>
+                        </form>
+                        
+                        <form action="/toggle_favorite/{{ receta.id }}" method="POST">
+                            <button type="submit" class="h-full px-6 bg-white border-2 border-gray-800 rounded-2xl hover:bg-red-50 transition-all shadow-md group">
+                                <i data-lucide="heart" class="w-8 h-8 {{ 'fill-red-500 text-red-500' if receta.favorito == 1 else 'text-gray-400 group-hover:text-red-500' }}"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <h1 class="text-3xl md:text-5xl font-black mb-4">{{ receta.nombre }}</h1>
+                    <p class="text-indigo-100 text-lg italic">"{{ receta.descripcion }}"</p>
                 </div>
             </div>
 
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="md:col-span-1">
-                    <div class="sticky top-6">
-                        <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
-                            <span class="text-2xl">🧂</span> Ingredientes
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10 text-center">
+                    <div class="bg-blue-50 p-4 rounded-2xl border-2 border-blue-100">
+                        <i data-lucide="users" class="w-6 h-6 text-blue-500 mx-auto mb-1"></i>
+                        <span class="block text-xs font-bold text-blue-900 uppercase">Comensales</span>
+                        <span class="text-lg font-black text-blue-700">{{ receta.personas }} pax</span>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-2xl border-2 border-purple-100">
+                        <i data-lucide="activity" class="w-6 h-6 text-purple-500 mx-auto mb-1"></i>
+                        <span class="block text-xs font-bold text-purple-900 uppercase">Dieta</span>
+                        <span class="text-lg font-black text-purple-700 capitalize">{{ receta.dieta }}</span>
+                    </div>
+                    </div>
+
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="md:col-span-1">
+                        <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                            <i data-lucide="shopping-basket" class="text-yellow-600"></i> Ingredientes
                         </h2>
-                        <ul class="space-y-3">
+                        <ul class="space-y-3 bg-gray-50 p-5 rounded-2xl border-2 border-gray-100">
                             {% for ing in receta.ingredientes %}
-                            <li class="flex flex-col bg-gray-50 border-2 border-gray-200 rounded-xl p-3">
-                                <span class="font-bold text-gray-800">{{ ing.nombre }}</span>
-                                <span class="text-sm text-gray-500 font-medium">{{ ing.cantidad }}</span>
+                            <li class="flex items-center justify-between font-medium">
+                                <span class="text-gray-800">{{ ing.nombre }}</span>
+                                <span class="text-gray-500 font-bold bg-white px-2 py-1 rounded border border-gray-200">{{ ing.cantidad }}</span>
                             </li>
                             {% endfor %}
                         </ul>
                     </div>
-                </div>
 
-                <div class="md:col-span-2">
-                    <h2 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2 border-b-2 border-gray-200 pb-2">
-                        <span class="text-2xl">👨‍🍳</span> Preparación
-                    </h2>
-                    <div class="space-y-4 relative">
-                        <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-gray-200 hidden sm:block"></div>
-                        {% for paso in receta.pasos %}
-                        <div class="relative flex gap-4 bg-white border-2 border-gray-200 rounded-xl p-4 md:p-5 hover:border-indigo-300 transition-colors group">
-                            <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 border-2 border-indigo-600 flex items-center justify-center font-black text-indigo-700 z-10 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
-                                {{ loop.index }}
+                    <div class="md:col-span-2">
+                        <h2 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                            <i data-lucide="list-ordered" class="text-rose-600"></i> Preparación
+                        </h2>
+                        <div class="space-y-6">
+                            {% for paso in receta.pasos %}
+                            <div class="flex gap-4 bg-white border-2 border-gray-200 rounded-xl p-4 hover:border-indigo-300 transition-colors">
+                                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-100 border-2 border-indigo-600 flex items-center justify-center font-black text-indigo-700">
+                                    {{ loop.index }}
+                                </div>
+                                <p class="text-gray-700 font-medium">{{ paso }}</p>
                             </div>
-                            <p class="text-gray-700 font-medium leading-relaxed pt-1">{{ paso }}</p>
-                        </div>
-                        {% endfor %}
-                    </div>
-                    
-                    <div class="mt-8 p-6 bg-indigo-50 border-2 border-indigo-200 rounded-2xl flex items-start gap-4">
-                        <i data-lucide="check-circle-2" class="w-8 h-8 text-indigo-600 flex-shrink-0"></i>
-                        <div>
-                            <h3 class="font-bold text-indigo-900 text-lg mb-1">¡Listo para servir!</h3>
-                            <p class="text-indigo-700 font-medium">Disfruta de esta deliciosa receta. ¡Buen provecho!</p>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -101,6 +98,8 @@
         </div>
     </div>
 
-    <script>lucide.createIcons();</script>
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>

@@ -26,6 +26,19 @@
             </a>
         </div>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="space-y-3">
+                {% for category, message in messages %}
+                    <div class="p-4 border-2 rounded-xl font-bold flex items-center gap-3 shadow-md {{ 'bg-red-100 border-red-500 text-red-800' if category == 'error' else 'bg-green-100 border-green-500 text-green-800' }}">
+                        <i data-lucide="{{ 'alert-triangle' if category == 'error' else 'check-circle-2' }}" class="w-6 h-6"></i>
+                        <p>{{ message }}</p>
+                    </div>
+                {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
         <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg">
             <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
                 <div class="p-2 bg-green-100 rounded-lg border-2 border-gray-800">
@@ -38,121 +51,185 @@
                 <form action="/add_ingredient" method="POST" class="flex flex-col md:flex-row gap-3 mb-4">
                     <input type="text" name="nombre" placeholder="Ej. Tomate..." required class="flex-1 px-4 py-3 border-2 border-gray-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 font-medium">
                     <div class="flex gap-2">
-                        <input type="number" name="cantidad" value="1" min="1" required class="w-24 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-green-500">
-                        <select name="unidad" class="w-28 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-green-500">
-                            <option value="unid">unid</option>
+                        <input type="number" name="cantidad" value="1" min="0.1" step="0.1" required class="w-24 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium">
+                        <select name="unidad" class="w-28 px-3 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium">
                             <option value="gr">gr</option>
+                            <option value="kg">kg</option>
+                            <option value="unid">unid</option>
                             <option value="ml">ml</option>
+                            <option value="l">l</option>
                         </select>
-                        <button type="submit" class="px-4 py-3 bg-gray-900 text-white rounded-xl border-2 border-gray-900 hover:bg-gray-800 hover:shadow-md transition-all flex items-center justify-center gap-2 shrink-0 font-bold">
+                        <button type="submit" class="px-4 py-3 bg-gray-900 text-white rounded-xl border-2 border-gray-900 hover:bg-gray-800 transition-all flex items-center justify-center gap-2 font-bold">
                             <i data-lucide="plus" class="w-5 h-5"></i>
-                            <span class="hidden sm:inline">Añadir</span>
                         </button>
                     </div>
                 </form>
 
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-400 transition-colors">
-                        <span class="font-medium flex items-center gap-2">
-                            <span class="w-2 h-2 rounded-full bg-green-500"></span>
-                            Pollo <span class="text-gray-500 text-sm ml-2">(500 gr)</span>
-                        </span>
-                        <div class="flex gap-2">
-                            <button class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 border-2 border-transparent hover:border-red-200 rounded-lg transition-colors">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
+                    {% if ingredientes %}
+                        {% for ing in ingredientes %}
+                        <div class="flex items-center justify-between p-3 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-400 transition-colors">
+                            <span class="font-medium flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                                {{ ing.nombre }} <span class="text-gray-500 text-sm ml-2">({{ ing.cantidad }} {{ ing.medida }})</span>
+                            </span>
+                            <form action="/delete_ingredient/{{ ing.id }}" method="POST" class="inline">
+                                <button type="submit" class="p-2 text-gray-600 hover:text-red-600 rounded-lg transition-colors">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </form>
                         </div>
-                    </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-gray-500 text-center py-4 italic">Tu despensa está vacía.</p>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
         <form action="/generate_menu" method="POST">
-            <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg mb-6">
-                <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
-                    <div class="p-2 bg-blue-100 rounded-lg border-2 border-gray-800">
-                        <i data-lucide="settings" class="w-5 h-5 text-blue-700"></i>
-                    </div>
-                    Bloque 2 — Preferencias
-                </h2>
-
+            <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-6 shadow-lg mb-6">
                 <div class="flex flex-col md:flex-row gap-5">
                     <div class="flex-1">
-                        <label class="flex items-center gap-2 mb-2 font-bold text-gray-700">
-                            <i data-lucide="salad" class="w-4 h-4"></i> Dieta
-                        </label>
-                        <select name="dieta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                            <option value="completa">Completa</option>
+                        <label class="block mb-2 font-bold text-gray-700">Dieta</label>
+                        <select name="dieta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white">
+                            <option value="dieta completa">Completa</option>
                             <option value="vegetariano">Vegetariano</option>
                             <option value="vegano">Vegano</option>
+                            <option value="carnivoro">Carnívoro</option>
                         </select>
                     </div>
-
                     <div class="flex-1">
-                        <label class="flex items-center gap-2 mb-2 font-bold text-gray-700">
-                            <i data-lucide="egg-fried" class="w-4 h-4"></i> Tipo de receta
-                        </label>
-                        <select name="tipo_receta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer">
-                            <option value="menu_completo">Menú completo</option>
+                        <label class="block mb-2 font-bold text-gray-700">Tipo de receta</label>
+                        <select name="tipo_receta" class="w-full px-4 py-3 border-2 border-gray-800 rounded-xl bg-white">
+                            <option value="menu_completo">Menú completo (9 opciones)</option>
                             <option value="desayuno">Desayuno</option>
                             <option value="comida">Comida</option>
                             <option value="cena">Cena</option>
                         </select>
                     </div>
                 </div>
-            </div>
-
-            <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-5 md:p-6 shadow-lg">
-                <h2 class="mb-4 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase tracking-wide">
-                    <div class="p-2 bg-purple-100 rounded-lg border-2 border-gray-800">
-                        <i data-lucide="users" class="w-5 h-5 text-purple-700"></i>
+                <div class="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border-2 border-gray-300 rounded-xl bg-white/60">
+                    <div class="flex items-center gap-3">
+                        <label class="font-bold text-gray-700">Pax:</label>
+                        <input type="number" name="personas" value="2" min="1" class="px-4 py-3 border-2 border-gray-800 rounded-xl w-20">
                     </div>
-                    Bloque 3 — Generar
-                </h2>
-
-                <div class="border-2 border-gray-300 rounded-xl p-4 bg-white/60 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <label class="font-bold text-gray-700 whitespace-nowrap">Comensales:</label>
-                        <input type="number" name="personas" value="2" min="1" max="20" class="px-4 py-3 border-2 border-gray-800 rounded-xl bg-white font-medium focus:outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto cursor-pointer">
-                    </div>
-
-                    <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl border-2 border-indigo-900 hover:bg-indigo-700 hover:shadow-lg transition-all flex items-center justify-center gap-2 font-bold text-lg">
-                        <i data-lucide="chef-hat" class="w-5 h-5"></i>
+                    <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-indigo-600 text-white rounded-xl border-2 border-indigo-900 hover:bg-indigo-700 transition-all font-bold text-lg">
                         GENERAR RECETAS
                     </button>
                 </div>
             </div>
         </form>
-    </div>
 
-    <div id="welcomeModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white border-2 border-gray-800 rounded-3xl p-6 md:p-8 max-w-md w-full shadow-2xl relative overflow-hidden">
-            <div class="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500"></div>
-            
-            <div class="flex justify-center mb-6">
-                <div class="w-16 h-16 bg-indigo-100 border-2 border-indigo-600 rounded-2xl flex items-center justify-center transform rotate-3">
-                    <i data-lucide="party-popper" class="w-8 h-8 text-indigo-600"></i>
-                </div>
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-6 shadow-lg mb-6">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="flex items-center gap-3 text-lg font-bold text-gray-800 uppercase">
+                    <i data-lucide="chef-hat" class="w-6 h-6 text-orange-600"></i> Sugerencias del Chef
+                </h2>
+                {% if sugerencias %}
+                <button form="form-cocinar" type="submit" class="px-6 py-2 bg-green-600 text-white rounded-xl font-bold hover:bg-green-700 shadow-md flex items-center gap-2">
+                    <i data-lucide="flame" class="w-5 h-5"></i> COCINAR SELECCIÓN
+                </button>
+                {% endif %}
             </div>
 
-            <h2 class="text-2xl font-black text-center text-gray-900 mb-2">¡Bienvenido de nuevo!</h2>
-            <p class="text-center text-gray-500 font-medium mb-6">Tienes ingredientes guardados en tu despensa virtual.</p>
+            <form id="form-cocinar" action="/cook_selection" method="POST">
+                <div class="grid grid-cols-1 gap-4">
+                    {% if sugerencias %}
+                        {% for rec in sugerencias %}
+                        <div class="flex flex-col md:flex-row bg-white border-2 border-gray-300 rounded-xl overflow-hidden hover:border-indigo-400 transition-all">
+                            <div class="p-4 flex items-center gap-4 bg-gray-50/50 md:w-1/3 border-b md:border-b-0 md:border-r border-gray-100">
+                                <input type="checkbox" name="recetas_seleccionadas" value="{{ rec.id }}" class="w-6 h-6 rounded border-gray-400 text-indigo-600 cursor-pointer">
+                                <h3 class="font-bold text-gray-900">{{ rec.nombre }}</h3>
+                            </div>
+                            <div class="p-4 flex-1 italic text-sm text-gray-600 flex items-center">
+                                "{{ rec.descripcion }}"
+                            </div>
+                            <div class="p-4 bg-gray-50 flex items-center justify-end gap-3 md:w-1/4">
+                                <a href="/recipe/{{ rec.id }}" class="p-2 bg-gray-900 text-white rounded-lg hover:bg-indigo-600" title="Ver pasos"><i data-lucide="eye" class="w-5 h-5"></i></a>
+                                <button type="submit" form="form-fav-{{ rec.id }}" class="p-2 rounded-lg text-gray-400 hover:bg-gray-200 transition-colors" title="Guardar en favoritos">
+                                    <i data-lucide="heart" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-gray-400 text-center py-6 italic">Genera un menú para ver sugerencias.</p>
+                    {% endif %}
+                </div>
+            </form>
+            
+            {% for rec in sugerencias %}
+                <form id="form-fav-{{ rec.id }}" action="/toggle_favorite/{{ rec.id }}" method="POST" class="hidden"></form>
+            {% endfor %}
+        </div>
 
-            <div class="space-y-3">
-                <button onclick="document.getElementById('welcomeModal').classList.add('hidden')" class="w-full px-6 py-4 bg-green-500 text-white rounded-xl border-2 border-green-700 hover:bg-green-600 transition-all flex items-center justify-center gap-2 font-bold text-lg">
-                    <i data-lucide="check" class="w-6 h-6"></i> Sí, mantener
-                </button>
-                <form action="/clear_pantry" method="POST">
-                    <button type="submit" class="w-full px-6 py-4 bg-white text-red-600 rounded-xl border-2 border-red-200 hover:bg-red-50 transition-all flex items-center justify-center gap-2 font-bold">
-                        <i data-lucide="trash-2" class="w-5 h-5"></i> No, vaciar despensa
-                    </button>
-                </form>
+        <div class="bg-white/95 backdrop-blur-md border-2 border-gray-800 rounded-2xl p-6 shadow-lg mb-6">
+            <h2 class="mb-6 flex items-center gap-3 text-lg font-bold text-gray-800 uppercase">
+                <i data-lucide="book-open" class="w-6 h-6 text-indigo-700"></i> Mi Libro de Cocina
+            </h2>
+            
+            <div class="grid grid-cols-1 gap-4">
+                {% if historial %}
+                    {% for rec in historial %}
+                    <div class="flex flex-col md:flex-row bg-white border-2 {{ 'border-green-500 bg-green-50' if rec.cocinado == 1 else 'border-yellow-400 bg-yellow-50' }} rounded-xl overflow-hidden">
+                        <div class="p-4 flex items-center gap-4 md:w-1/3 border-b md:border-b-0 md:border-r border-gray-100">
+                            {% if rec.cocinado == 1 %}
+                                <div class="text-green-600" title="Cocinado"><i data-lucide="check-circle" class="w-6 h-6"></i></div>
+                            {% else %}
+                                <div class="text-yellow-500" title="Favorito"><i data-lucide="star" class="w-6 h-6 fill-current"></i></div>
+                            {% endif %}
+                            <h3 class="font-bold text-gray-900 leading-tight">{{ rec.nombre }}</h3>
+                        </div>
+
+                        <div class="p-4 flex-1 italic text-sm text-gray-600 flex items-center">
+                            "{{ rec.descripcion }}"
+                        </div>
+
+                        <div class="p-4 bg-gray-50 flex items-center justify-end gap-3 md:w-1/3 border-t md:border-t-0 md:border-l border-gray-100">
+                            <form action="/cook_selection" method="POST">
+                                <input type="hidden" name="recetas_seleccionadas" value="{{ rec.id }}">
+                                <button type="submit" class="p-2 bg-green-600 text-white rounded-lg hover:bg-green-700" title="Cocinar de nuevo">
+                                    <i data-lucide="flame" class="w-5 h-5"></i>
+                                </button>
+                            </form>
+                            <a href="/recipe/{{ rec.id }}" class="p-2 bg-gray-900 text-white rounded-lg hover:bg-indigo-600" title="Ver pasos">
+                                <i data-lucide="eye" class="w-5 h-5"></i>
+                            </a>
+                            <form action="/toggle_favorite/{{ rec.id }}" method="POST">
+                                <button type="submit" class="p-2 rounded-lg {{ 'text-red-500 bg-red-50' if rec.favorito == 1 else 'text-gray-400 hover:bg-gray-200' }}">
+                                    <i data-lucide="heart" class="w-5 h-5 {{ 'fill-current' if rec.favorito == 1 }}"></i>
+                                </button>
+                            </form>
+                            <form action="/delete_recipe/{{ rec.id }}" method="POST" onsubmit="return confirm('¿Borrar definitivamente?')">
+                                <button type="submit" class="p-2 text-gray-400 hover:text-red-600">
+                                    <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-gray-400 text-center py-8 italic">Tu libro está vacío.</p>
+                {% endif %}
             </div>
         </div>
     </div>
 
     <script>
         lucide.createIcons();
+
+        // SCRIPT RESTAURADO: Bloquea el botón al generar y muestra la animación de carga
+        const formGenerar = document.querySelector('form[action="/generate_menu"]');
+        if (formGenerar) {
+            formGenerar.addEventListener('submit', function() {
+                const boton = this.querySelector('button[type="submit"]');
+                boton.disabled = true;
+                boton.classList.add('opacity-70', 'cursor-not-allowed');
+                boton.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> COCINANDO...';
+                lucide.createIcons();
+            });
+        }
     </script>
 </body>
 </html>

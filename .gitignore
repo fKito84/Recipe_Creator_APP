@@ -1,0 +1,15 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Archivos de la base de datos (para no subir datos de prueba)
+*.db
+*.sqlite3
+
+# Caché de Python
+__pycache__/
+*.pyc
+
+# Archivos de entorno (si usas variables ocultas en el futuro)
+.env
